@@ -25,7 +25,7 @@
         $rfCode = 357644;
     }
 
-    $rfPath = 'sudo /home/pi/www/rfoutlet/codesend ' . $rfCode;
+    $rfPath = '/home/pi/www/rfoutlet/codesend ' . $rfCode;
 
     shell_exec($rfPath);
 
