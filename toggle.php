@@ -1,27 +1,27 @@
 <?php
 
-    $lightId = Input::get('lightId');
-    $lightStatus = Input::get('lightStatus');
+    $outletLight = $_POST['outletId'];
+    $outletStatus = $_POST['outletStatus'];
 
-    if($lightId == "1" && $lightStatus == "on"){
+    if($outletLight == "1" && $outletStatus == "on"){
         $rfCode = 349491;
-    }else if($lightId == "1" && $lightStatus == "off"){
+    }else if($outletLight == "1" && $outletStatus == "off"){
         $rfCode = 349500;
-    }else if($lightId == "2" && $lightStatus == "on"){
+    }else if($outletLight == "2" && $outletStatus == "on"){
         $rfCode = 349635;
-    }else if($lightId == "2" && $lightStatus == "off"){
+    }else if($outletLight == "2" && $outletStatus == "off"){
         $rfCode = 349644;
-    }else if($lightId == "3" && $lightStatus == "on"){
+    }else if($outletLight == "3" && $outletStatus == "on"){
         $rfCode = 349955;
-    }else if($lightId == "3" && $lightStatus == "off"){
+    }else if($outletLight == "3" && $outletStatus == "off"){
         $rfCode = 349964;
-    }else if($lightId == "4" && $lightStatus == "on"){
+    }else if($outletLight == "4" && $outletStatus == "on"){
         $rfCode = 351491;
-    }else if($lightId == "4" && $lightStatus == "off"){
+    }else if($outletLight == "4" && $outletStatus == "off"){
         $rfCode = 351500;
-    }else if($lightId == "5" && $lightStatus == "on"){
+    }else if($outletLight == "5" && $outletStatus == "on"){
         $rfCode = 357635;
-    }else if($lightId == "5" && $lightStatus == "off"){
+    }else if($outletLight == "5" && $outletStatus == "off"){
         $rfCode = 357644;
     }
 
@@ -30,3 +30,5 @@
     shell_exec($rfPath);
 
     echo json_encode(['success' => true, 'rfPath' => $rfPath]);
+
+?>
