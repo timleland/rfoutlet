@@ -1,28 +1,39 @@
 <?php
+$rfPath = '/var/www/rfoutlet/codesend ';
 $outletLight = $_POST['outletId'];
 $outletStatus = $_POST['outletStatus'];
+
 if ($outletLight == "1" && $outletStatus == "on") {
-    $rfCode = 349491;
+    $rfCodes = array(1070387);
 } else if ($outletLight == "1" && $outletStatus == "off") {
-    $rfCode = 349500;
+    $rfCodes = array(1070396);
 } else if ($outletLight == "2" && $outletStatus == "on") {
-    $rfCode = 349635;
+    $rfCodes = array(1070531);
 } else if ($outletLight == "2" && $outletStatus == "off") {
-    $rfCode = 349644;
+    $rfCodes = array(1070540);
 } else if ($outletLight == "3" && $outletStatus == "on") {
-    $rfCode = 349955;
+    $rfCodes = array(1070851);
 } else if ($outletLight == "3" && $outletStatus == "off") {
-    $rfCode = 349964;
+    $rfCodes = array(1070860);
 } else if ($outletLight == "4" && $outletStatus == "on") {
-    $rfCode = 351491;
+    $rfCodes = array(1072387);
 } else if ($outletLight == "4" && $outletStatus == "off") {
-    $rfCode = 351500;
+    $rfCodes = array(1072396);
 } else if ($outletLight == "5" && $outletStatus == "on") {
-    $rfCode = 357635;
+    $rfCodes = array(1078531);
 } else if ($outletLight == "5" && $outletStatus == "off") {
-    $rfCode = 357644;
+    $rfCodes = array(1078540);
+} else if ($outletLight == "6" && $outletStatus == "on") {
+    $rfCodes = array(1070387, 1070531, 1070851, 1072387, 1078531);
+} else if ($outletLight == "6" && $outletStatus == "off") {
+        $rfCodes = array(1070396, 1070540, 1070860, 1072396, 1078540);
 }
-$rfPath = '/var/www/rfoutlet/codesend ' . $rfCode;
-shell_exec($rfPath);
-echo json_encode(['success' => true, 'rfPath' => $rfPath]);
+
+
+foreach ($rfCodes as $rfCode) {
+        shell_exec($rfPath . $rfCode);
+        sleep(.5);
+}
+
+echo json_encode(array('success' => true));
 ?>
