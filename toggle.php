@@ -32,7 +32,7 @@ if ($outletLight == "1" && $outletStatus == "on") {
 
 foreach ($rfCodes as $rfCode) {
         shell_exec($rfPath . $rfCode);
-        sleep(.5);
+        sleep(1);
 }
 
 echo json_encode(array('success' => true));
