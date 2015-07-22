@@ -1,4 +1,4 @@
-####433mhz RF Wireless Power Outlets
+####433Mhz RF Wireless Power Outlets
 Have you ever wanted to wirelessly control power outlets from your phone using a Raspberry Pi? 
 
 **Blog Post:** [TimLeland.com/wireless-power-outlets](http://timleland.com/wireless-power-outlets/)
