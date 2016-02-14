@@ -1,39 +1,70 @@
 <?php
-$rfPath = '/var/www/rfoutlet/codesend ';
+header('Content-Type: application/json');
+header('Cache-Control: no-cache, must-revalidate');
+
+// Edit these codes for each outlet
+$codes = array(
+    "1" => array(
+        "on" => 349491,
+        "off" => 349500
+    ),
+    "2" => array(
+        "on" => 349635,
+        "off" => 349644
+    ),
+    "3" => array(
+        "on" => 349955,
+        "off" => 349964
+    ),
+    "4" => array(
+        "on" => 351491,
+        "off" => 351500
+    ),
+    "5" => array(
+        "on" => 357635,
+        "off" => 357644
+    ),
+);
+
+// Path to the codesend binary (current directory is the default)
+$codeSendPath = './codesend';
+
+// This PIN is not the first PIN on the Raspberry Pi GPIO header!
+// Consult https://projects.drogon.net/raspberry-pi/wiringpi/pins/
+// for more information.
+$codeSendPIN = "0";
+
+// Pulse length depends on the RF outlets you are using. Use RFSniffer to see what pulse length your device uses.
+$codeSendPulseLength = "189";
+
+if (!file_exists($codeSendPath)) {
+    error_log("$codeSendPath is missing, please edit the script", 0);
+    die(json_encode(array('success' => false)));
+}
+
 $outletLight = $_POST['outletId'];
 $outletStatus = $_POST['outletStatus'];
 
-if ($outletLight == "1" && $outletStatus == "on") {
-    $rfCodes = array(349491);
-} else if ($outletLight == "1" && $outletStatus == "off") {
-    $rfCodes = array(349500);
-} else if ($outletLight == "2" && $outletStatus == "on") {
-    $rfCodes = array(349635);
-} else if ($outletLight == "2" && $outletStatus == "off") {
-    $rfCodes = array(349644);
-} else if ($outletLight == "3" && $outletStatus == "on") {
-    $rfCodes = array(349955);
-} else if ($outletLight == "3" && $outletStatus == "off") {
-    $rfCodes = array(349964);
-} else if ($outletLight == "4" && $outletStatus == "on") {
-    $rfCodes = array(351491);
-} else if ($outletLight == "4" && $outletStatus == "off") {
-    $rfCodes = array(351500);
-} else if ($outletLight == "5" && $outletStatus == "on") {
-    $rfCodes = array(357635);
-} else if ($outletLight == "5" && $outletStatus == "off") {
-    $rfCodes = array(357644);
-} else if ($outletLight == "6" && $outletStatus == "on") {
-    $rfCodes = array(349491, 349635, 349955, 351491, 357635);
-} else if ($outletLight == "6" && $outletStatus == "off") {
-        $rfCodes = array(349500, 349644, 349964, 351500, 357644);
+if ($outletLight == "6") {
+    // 6 is all 5 outlets combined
+    if (function_exists('array_column')) {
+        // PHP >= 5.5
+        $codesToToggle = array_column($codes, $outletStatus);
+    } else {
+        $codesToToggle = array();
+        foreach ($codes as $outletCodes) {
+            array_push($codesToToggle, $outletCodes[$outletStatus]);
+        }
+    }
+} else {
+    // One
+    $codesToToggle = array($codes[$outletLight][$outletStatus]);
 }
 
-
-foreach ($rfCodes as $rfCode) {
-        shell_exec($rfPath . $rfCode);
-        sleep(1);
+foreach ($codesToToggle as $codeSendCode) {
+    shell_exec($codeSendPath . ' ' . $codeSendCode . ' -p ' . $codeSendPIN . ' -l ' . $codeSendPulseLength);
+    sleep(1);
 }
 
-echo json_encode(array('success' => true));
+die(json_encode(array('success' => true)));
 ?>
