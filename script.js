@@ -9,7 +9,6 @@ var toggleOutlet = function(buttonClicked) {
 
 };
 
-
 $(function() {
     $('.toggleOutlet').click(function() {
         toggleOutlet($(this));
