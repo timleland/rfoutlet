@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
     mySwitch.setPulseLength(pulseLength);
     mySwitch.enableTransmit(PIN);
     mySwitch.send(code, 24);
+    mySwitch.disableTransmit();
 
     return EXIT_SUCCESS;
 }
