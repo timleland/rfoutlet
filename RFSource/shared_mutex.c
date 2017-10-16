@@ -20,15 +20,14 @@ shared_mutex_t shared_mutex_init(const char *name, mode_t mode) {
   if (errno == ENOENT) {
     mutex.shm_fd = shm_open(name, O_RDWR|O_CREAT, mode);
     mutex.created = 1;
+    // Change permissions of shared memory, so every body can access it. Avoiding the umask of shm_open
+    if (fchmod(mutex.shm_fd, mode) != 0) {
+      perror("fchmod");
+    }
   }
   if (mutex.shm_fd == -1) {
     perror("shm_open");
     return mutex;
-  }
-
-  // Change permissions of shared memory, so every body can access it. Avoiding the umask of shm_open
-  if (fchmod(mutex.shm_fd, mode) != 0) {
-    perror("fchmod");
   }
 
   // Truncate shared memory segment so it would contain
