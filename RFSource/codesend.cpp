@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
+#include <time.h>
 
 #include "RCSwitch.h"
 #include "RFOutlet.h"
@@ -95,7 +96,28 @@ int main(int argc, char *argv[]) {
     //    printf("A previous codesend instance has already acquired a lock. Waiting!\n");
     // }
 
-    pthread_mutex_lock(mutex.ptr);
+    // 2 second timeout for acquiring the lock
+    struct timespec abs_time; 
+    clock_gettime(CLOCK_REALTIME , &abs_time);
+    abs_time.tv_sec += 2;
+
+    if (pthread_mutex_timedlock(mutex.ptr, &abs_time) != 0) {
+        const char * const fd_path = "/proc/self/fd";
+        const char *shm_path = NULL;
+        size_t needed = snprintf(NULL, 0, "%s/%d", fd_path, mutex.shm_fd) + 1;
+        char *buffer = (char *)malloc(needed);
+        if (snprintf(buffer, needed, "%s/%d", fd_path, mutex.shm_fd) >= 0) {
+            shm_path = realpath(buffer, NULL);
+        }
+        free(buffer);
+
+        if (shm_path == NULL) {
+            shm_path = "/dev/shm";
+        }
+
+        fprintf(stderr, "Could not acquire an exclusive lock to activate the hardware, please try deleting the lock file at '%s' and try again\n", shm_path);
+        return EXIT_FAILURE;
+    }
 
     if (wiringPiSetup () == -1) {
         return EXIT_FAILURE;
