@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+#include "RFOutlet.h"
 #include "RCSwitch.h"
 
 #define DEFAULT_PIN 2
@@ -35,9 +36,15 @@ int main(int argc, char *argv[]) {
     int PIN = DEFAULT_PIN;
     
     if (argumentPIN != NULL) {
-        PIN = atoi(argumentPIN);
+        if (!parseStringToInt(argumentPIN, &PIN, 10)) {
+            perror("Invalid PIN");
+            return EXIT_FAILURE;            
+        }
         printf("Listening on PIN: %i\n", PIN);
-    }
+    } else {
+        printUsage(argv);
+        return EXIT_FAILURE;
+    }        
     
     if (wiringPiSetup() == -1) {
         return EXIT_FAILURE;

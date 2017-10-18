@@ -1,12 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "RCSwitch.h"
-
+#include "RFOutlet.h"
 // For serializing access to hardware when called simultaneously
-#include <signal.h>
-#include <sys/stat.h>
 #include "shared_mutex.h"
 
 #define DEFAULT_PIN 0
@@ -22,6 +21,7 @@ void interruptHandler(int signal) {
     // None of the pthread functions are async signal safe
     printf("Please wait until proper shut down.\n");
 }
+
 
 int main(int argc, char *argv[]) {
     signal(SIGINT, interruptHandler);
@@ -59,7 +59,10 @@ int main(int argc, char *argv[]) {
     int PIN = DEFAULT_PIN;
 
     if (argumentPIN != NULL) {
-        PIN = atoi(argumentPIN);
+        if (!parseStringToInt(argumentPIN, &PIN, 10)) {
+            perror("Invalid PIN");
+            return EXIT_FAILURE;            
+        }
     }
 
     /* Now set the values of "argc" and "argv" to the values after the
@@ -74,7 +77,12 @@ int main(int argc, char *argv[]) {
     argv += optind;
 
     // Parse the first parameter to this command as an integer
-    int code = atoi(argv[0]);
+    int code = 0;
+
+    if (!parseStringToInt(argv[0], &code, 10)) {
+        perror("Invalid code");
+        return EXIT_FAILURE;            
+    }
 
     // Acquire the shared mutex
     // Set a permissive mode since codesend may be executed by www-data and other terminal users. Make the shared memory wide open
@@ -97,7 +105,10 @@ int main(int argc, char *argv[]) {
     int pulseLength = DEFAULT_PULSE_LENGTH;
 
     if (argumentPulseLength != NULL) {
-        pulseLength = atoi(argumentPulseLength);
+        if (!parseStringToInt(argumentPulseLength, &pulseLength, 10)) {
+            perror("Invalid pulse length");
+            return EXIT_FAILURE;            
+        }
     }
 
     printf("Sending Code: %i. PIN: %i. Pulse Length: %i\n", code, PIN, pulseLength);
