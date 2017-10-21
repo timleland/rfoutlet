@@ -11,6 +11,7 @@
 
 #define DEFAULT_PIN 0
 #define DEFAULT_PULSE_LENGTH 189
+#define DEFAULT_HW_LOCK_TIMEOUT 2
 
 shared_mutex_t mutex;
 
@@ -18,11 +19,19 @@ void printUsage(char *argv[]) {
     printf("Usage: %s <code> [-p <PIN Number> (default: %i)] [-l <Pulse Length> (default: %i)].\n", argv[0], DEFAULT_PIN, DEFAULT_PULSE_LENGTH);
 }
 
-void interruptHandler(int signal) {
-    // None of the pthread functions are async signal safe
-    printf("Please wait until proper shut down.\n");
+void *interruptThread(void *signal) {
+    printf("Shutting down...\n");
+    // Give the locking mechanism some time and then exit
+    sleep(DEFAULT_HW_LOCK_TIMEOUT + 1);
+    exit(*(int *)signal);
 }
 
+void interruptHandler(int signal) {
+    pthread_t thread;
+    if (pthread_create(&thread, NULL, interruptThread, &signal) != 0) {
+        exit(signal);
+    }
+}
 
 int main(int argc, char *argv[]) {
     signal(SIGINT, interruptHandler);
@@ -85,21 +94,17 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;            
     }
 
-    // Acquire the shared mutex
-    // Set a permissive mode since codesend may be executed by www-data and other terminal users. Make the shared memory wide open
+    // Acquire the shared mutex and set a permissive mode since codesend may be executed by www-data and other terminal users
     mutex = shared_mutex_init("codesend_mutex", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+    
     if (mutex.ptr == NULL) {
         return EXIT_FAILURE;
     }
 
-    // if (!mutex.created) {
-    //    printf("A previous codesend instance has already acquired a lock. Waiting!\n");
-    // }
-
-    // 2 second timeout for acquiring the lock
+    // Timeout for acquiring the lock, so we don't hang the process!
     struct timespec abs_time; 
     clock_gettime(CLOCK_REALTIME , &abs_time);
-    abs_time.tv_sec += 2;
+    abs_time.tv_sec += DEFAULT_HW_LOCK_TIMEOUT;
 
     if (pthread_mutex_timedlock(mutex.ptr, &abs_time) != 0) {
         const char * const fd_path = "/proc/self/fd";
