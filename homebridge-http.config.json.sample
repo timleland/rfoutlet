@@ -1,0 +1,133 @@
+{
+    "bridge": {
+    	"name": "HomeBridge",
+    	    "username": "CD:43:8A:C5:CD:42",
+    	    "port": 51826,
+    	    "pin": "124-45-678"
+    },
+
+    "description": "HomeBridge HTTP Status Control",
+
+    "accessories": [
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 1",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=1&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=1&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=1",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    },
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 2",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=2&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=2&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=2",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    },
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 3",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=3&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=3&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=3",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    },
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 4",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=4&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=4&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=4",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    },
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 5",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=5&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=5&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=5",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    },
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 6",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=6&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=6&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=6",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    },
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 7",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=7&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=7&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=7",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    },
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 8",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=8&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=8&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=8",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    },
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 9",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=9&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=9&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=9",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    },
+    {
+   	"accessory": "Http",
+   	    "name": "Outlet 10",
+   	    "switchHandling": "realtime",
+   	    "http_method": "GET",
+   	    "on_url":      "http://localhost/rfoutlet/toggle.php?outletId=10&outletStatus=on",
+   	    "off_url":     "http://localhost/rfoutlet/toggle.php?outletId=10&outletStatus=off",
+   	    "status_url":     "http://localhost/rfoutlet/status.php?outletId=10",
+   	    "service": "Light",
+   	    "brightnessHandling": "no",
+   	    "sendimmediately": ""
+    }
+    ]
+}
