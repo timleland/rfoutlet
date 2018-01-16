@@ -1,0 +1,4 @@
+*.DS_Store
+*.o
+status.json
+configuration.inc.php

@@ -4,6 +4,11 @@ Have you ever wanted to wirelessly control power outlets from your phone using a
 
 **Blog Post:** [TimLeland.com/wireless-power-outlets](https://timleland.com/wireless-power-outlets/)
 
+Homebridge
+* A sample configuration file for the [Homebridge HTTP plugin](https://github.com/rudders/homebridge-http) is included at `homebridge-http.config.json.sample`
+* You may want to set a longer polling interval following the instructions [here](https://github.com/rudders/homebridge-http/issues/76)
+* Please note that the status tracking for Homebridge does not yet support receiving RF signals from the remote
+
 Voice Control Outlets (Follow up Guides)
 * [Siri using HomeBridge](https://timleland.com/use-siri-to-control-wireless-power-outlets-homebridge/)
 * [Google Home](https://timleland.com/use-google-home-to-control-wireless-power-outlets/)

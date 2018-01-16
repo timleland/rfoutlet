@@ -2,51 +2,26 @@
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, must-revalidate');
 
-// Edit these codes for each outlet
-$codes = array(
-    "1" => array(
-        "on" => 349491,
-        "off" => 349500
-    ),
-    "2" => array(
-        "on" => 349635,
-        "off" => 349644
-    ),
-    "3" => array(
-        "on" => 349955,
-        "off" => 349964
-    ),
-    "4" => array(
-        "on" => 351491,
-        "off" => 351500
-    ),
-    "5" => array(
-        "on" => 357635,
-        "off" => 357644
-    ),
-);
-
-// Path to the codesend binary (current directory is the default)
-$codeSendPath = './codesend';
-
-// This PIN is not the first PIN on the Raspberry Pi GPIO header!
-// Consult https://projects.drogon.net/raspberry-pi/wiringpi/pins/
-// for more information.
-$codeSendPIN = "0";
-
-// Pulse length depends on the RF outlets you are using. Use RFSniffer to see what pulse length your device uses.
-$codeSendPulseLength = "189";
+// Please edit this file with your outlet codes and pulse length
+require_once('configuration.inc.php');
 
 if (!file_exists($codeSendPath)) {
     error_log("$codeSendPath is missing, please edit the script", 0);
     die(json_encode(array('success' => false)));
 }
 
-$outletLight = $_POST['outletId'];
-$outletStatus = $_POST['outletStatus'];
+$outletToToggle = (!empty($_POST['outletId'])) ? $_POST['outletId'] : $_GET['outletId'];
+$outletStatus = (!empty($_POST['outletStatus'])) ? $_POST['outletStatus'] : $_GET['outletStatus']; 
 
-if ($outletLight == "6") {
-    // 6 is all 5 outlets combined
+if (empty($outletToToggle) || empty($outletStatus)) {
+    error_log('Missing POST paremeters', 0);
+    die(json_encode(array('success' => false)));
+}
+
+// Add check to see if outlet to toggle is in our codes or not
+
+if ($outletToToggle == "all") {
+    // all is every outlets combined
     if (function_exists('array_column')) {
         // PHP >= 5.5
         $codesToToggle = array_column($codes, $outletStatus);
@@ -58,13 +33,46 @@ if ($outletLight == "6") {
     }
 } else {
     // One
-    $codesToToggle = array($codes[$outletLight][$outletStatus]);
+    $codesToToggle = array($codes[$outletToToggle][$outletStatus]);
 }
 
+$returnCode = 0;
+$output = NULL;
 foreach ($codesToToggle as $codeSendCode) {
-    shell_exec($codeSendPath . ' ' . $codeSendCode . ' -p ' . $codeSendPIN . ' -l ' . $codeSendPulseLength);
-    sleep(1);
+    exec($codeSendPath . ' ' . $codeSendCode . ' -p ' . $codeSendPIN . ' -l ' . $codeSendPulseLength, $output, $returnCode);
+    if ($returnCode != 0) {
+        error_log("Failed to execute $codeSendPath. Output was: " . implode(", ", $output) . ". Code $returnCode");
+        die(json_encode(array('success' => false, 'output' => $output)));
+    }
+}
+
+$status_contents = file_get_contents('status.json');
+
+$statuses = NULL;
+
+if ($status_contents === FALSE || $outletToToggle == "all") {
+    $defaultStatus = 0;
+    if ($outletToToggle == "all") {
+        $defaultStatus = $outletStatus == "on" ? 1 : 0;
+    }
+
+    $statuses = array();
+
+    foreach ($codes as $outletNumber=>$information) {
+        $statuses[$outletNumber] = $defaultStatus;
+    }
+} else {
+    $statuses = json_decode($status_contents, true);
+}
+
+if ($outletToToggle != "all") {
+    $statuses[$outletToToggle] = $outletStatus == "on" ? 1 : 0;
+}
+
+$JSON = json_encode($statuses, JSON_PRETTY_PRINT);
+
+if (file_put_contents('status.json', $JSON) === FALSE) {
+    die(json_encode(array('success' => false, 'output' => "file_put_contents")));
 }
 
 die(json_encode(array('success' => true)));
-?>
