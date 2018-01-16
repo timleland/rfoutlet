@@ -10,16 +10,18 @@ if (!file_exists($codeSendPath)) {
     die(json_encode(array('success' => false)));
 }
 
-$outletLight = (!empty($_POST['outletId'])) ? $_POST['outletId'] : $_GET['outletId'];
+$outletToToggle = (!empty($_POST['outletId'])) ? $_POST['outletId'] : $_GET['outletId'];
 $outletStatus = (!empty($_POST['outletStatus'])) ? $_POST['outletStatus'] : $_GET['outletStatus']; 
 
-if (empty($outletLight) || empty($outletStatus)) {
+if (empty($outletToToggle) || empty($outletStatus)) {
     error_log('Missing POST paremeters', 0);
     die(json_encode(array('success' => false)));
 }
 
-if ($outletLight == "6") {
-    // 6 is all 5 outlets combined
+// Add check to see if outlet to toggle is in our codes or not
+
+if ($outletToToggle == "all") {
+    // all is every outlets combined
     if (function_exists('array_column')) {
         // PHP >= 5.5
         $codesToToggle = array_column($codes, $outletStatus);
@@ -31,7 +33,7 @@ if ($outletLight == "6") {
     }
 } else {
     // One
-    $codesToToggle = array($codes[$outletLight][$outletStatus]);
+    $codesToToggle = array($codes[$outletToToggle][$outletStatus]);
 }
 
 $returnCode = 0;
@@ -42,6 +44,35 @@ foreach ($codesToToggle as $codeSendCode) {
         error_log("Failed to execute $codeSendPath. Output was: " . implode(", ", $output) . ". Code $returnCode");
         die(json_encode(array('success' => false, 'output' => $output)));
     }
+}
+
+$status_contents = file_get_contents('status.json');
+
+$statuses = NULL;
+
+if ($status_contents === FALSE || $outletToToggle == "all") {
+    $defaultStatus = 0;
+    if ($outletToToggle == "all") {
+        $defaultStatus = $outletStatus == "on" ? 1 : 0;
+    }
+
+    $statuses = array();
+
+    foreach ($codes as $outletNumber=>$information) {
+        $statuses[$outletNumber] = $defaultStatus;
+    }
+} else {
+    $statuses = json_decode($status_contents, true);
+}
+
+if ($outletToToggle != "all") {
+    $statuses[$outletToToggle] = $outletStatus == "on" ? 1 : 0;
+}
+
+$JSON = json_encode($statuses, JSON_PRETTY_PRINT);
+
+if (file_put_contents('status.json', $JSON) === FALSE) {
+    die(json_encode(array('success' => false, 'output' => "file_put_contents")));
 }
 
 die(json_encode(array('success' => true)));

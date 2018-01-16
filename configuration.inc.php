@@ -21,6 +21,26 @@ $codes = array(
         "on" => 357635,
         "off" => 357644
     ),
+    "6" => array(
+        "on" => 349491,
+        "off" => 349500
+    ),
+    "7" => array(
+        "on" => 349635,
+        "off" => 349644
+    ),
+    "8" => array(
+        "on" => 349955,
+        "off" => 349964
+    ),
+    "9" => array(
+        "on" => 351491,
+        "off" => 351500
+    ),
+    "10" => array(
+        "on" => 357635,
+        "off" => 357644
+    )
 );
 
 // Path to the codesend binary (current directory is the default)
